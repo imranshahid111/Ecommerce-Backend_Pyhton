@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from app.routes import category , product  # Import your routers here
+from sqlalchemy.sql.functions import user
+
+from app.routes import category , product , users  # Import your routers here
 from app.database import engine
 from app.models import base
 
@@ -14,6 +16,7 @@ app = FastAPI(
 
 # Include routers
 app.include_router(category.router)
+app.include_router(users.router)
 app.include_router(product.router)
 
 @app.get("/")

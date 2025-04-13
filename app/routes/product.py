@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from app.schemas.product import Product, ProductCreate
 from app.database import get_db
 from app import crud
+from app.routes.protected import get_current_user
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.post("/", response_model=Product)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(product: ProductCreate, current_user=Depends(get_current_user) , db: Session = Depends(get_db)) :
     return crud.create_product(db, product)
 
 @router.get("/", response_model=list[Product])
@@ -22,7 +23,7 @@ def read_product(product_id: int, db: Session = Depends(get_db)):
     return db_product
 
 @router.delete("/{product_id}", response_model=Product)
-def delete_product(product_id: int, db: Session = Depends(get_db)):
+def delete_product(product_id: int, current_user=Depends(get_current_user) , db: Session = Depends(get_db)):
     product = crud.delete_product(db, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
